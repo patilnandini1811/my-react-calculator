@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from "react";
 import { CalcContext } from '../context/CalcContext'
 
 const getStyleName = btn => {
@@ -15,33 +15,106 @@ const getStyleName = btn => {
 const Button = ({ value }) => {
   const { calc, setCalc } = useContext(CalcContext);
 
-  //click comma
+  // User click comma
   const commaClick = () => {
     setCalc({
       ...calc,
-      num: 77
-      // num: !calc.num.toString().includes('.') ? calc.num + value : calc.num
-    })
+      num: !calc.num.toString().includes('.') ? calc.num + value : calc.num
+    });
   }
+  // User click C
   const resetClick = () => {
+    setCalc({ sign: '', num: 0, res: 0 })
+  }
+  // User click number
+  const handleClickButton = () => {
+    const numberString = value.toString()
+
+    let numberValue;
+    if(numberString === '0' && calc.num === 0) {
+      numberValue = "0"
+    } else {
+      numberValue = Number(calc.num + numberString)
+    }
+
     setCalc({
-      sign: '', num: 0, res: 0
+      ...calc,
+      num: numberValue
+    })
+  }
+  // User click operation
+  const signClick = () => {
+    setCalc({
+      sign: value,
+      res: !calc.res && calc.num ? calc.num : calc.res,
+      num: 0
+    })
+  }
+  // User click equals
+  const equalsClick = () => {
+    if(calc.res && calc.num) {
+      const math = (a, b, sign) => {
+        const result = {
+          '+': (a, b) => a + b,
+          '-': (a, b) => a - b,
+          'x': (a, b) => a * b,
+          '/': (a, b) => a / b,
+        }
+        return result[sign](a, b);
+      }
+      setCalc({
+        res: math(calc.res, calc.num, calc.sign),
+        sign: '',
+        num: 0
+      })
+    }
+  }
+  // User click persen
+  const persenClick = () => {
+    if (calc.num) {
+      setCalc({
+        ...calc,
+        num: calc.num / 100 * (calc.res || 1), // Adjust percentage calculation based on the current result
+      });
+    } else {
+      setCalc({
+        ...calc,
+        res: calc.res / 100 // Applies percentage to `res` when `num` is not present
+      });
+    }
+  }
+  // User click invert button
+  const invertClick = () => {
+    setCalc({
+      num: calc.num ? calc.num * -1 : 0,
+      res: calc.res ? calc.res * -1 : 0,
+      sign: ''
     })
   }
 
-
-
-  const handleButtonClick = () => {
+  const handleBtnClick = () => {
+    
     const results = {
       '.': commaClick,
-      'C': resetClick
+      'C': resetClick,
+      '/': signClick,
+      'x': signClick,
+      '-': signClick,
+      '+': signClick,
+      '=': equalsClick,
+      '%': persenClick,
+      '+-': invertClick
     }
-    return results[value]()
+    if(results[value]) {
+      return results[value]()
+    } else {
+      return handleClickButton()
+    }
   }
-  return (
-    <button onClick={handleButtonClick} className={`${getStyleName(value)} button`}>{value}</button>
-  );
 
+  return (
+    <button onClick={handleBtnClick} className={`${getStyleName(value)} button`}>{value}</button>
+  )
 }
 
-export default Button;
+export default Button

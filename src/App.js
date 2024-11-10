@@ -1,10 +1,10 @@
 import React from 'react';
 import './App.css';
-import Button from './components/Button';
-import ButtonBox from './components/ButtonBox';
-import Wrapper from './components/Wrapper';
-import Screen from './components/Screen';
-import CalcProvider from './context/CalcContext';
+import Wrapper from "./components/Wrapper";
+import Screen from "./components/Screen";
+import ButtonBox from './components/ButtonBox'
+import Button from './components/Button'
+import CalcProvider from "./context/CalcContext";
 
 const btnValues = [
   ["C", "+-", "%", "/"],
@@ -21,7 +21,6 @@ const App = () => {
       <div className='title'>
         <h1>React Calculator</h1>
       </div>
-
       <CalcProvider>
         <Wrapper>
           <Screen />
